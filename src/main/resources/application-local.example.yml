@@ -1,0 +1,52 @@
+# 本地私有配置示例文件。
+# 使用方法：
+# 1. 复制为 application-local.yml
+# 2. 填入你自己的真实配置
+# 3. application-local.yml 已被 .gitignore 忽略，不会上传到 GitHub
+
+spring:
+  mail:
+    # 本地发邮件账号。
+    username: your-mail@example.com
+    # 发邮件账号对应的 SMTP 密码或授权码。
+    password: replace-with-your-mail-password
+
+  data:
+    redis:
+      # 本地 Redis 真实连接地址。
+      host: localhost
+      # 本地 Redis 真实端口。
+      port: 6380
+      # 本地 Redis 真实密码。
+      password: replace-with-your-local-redis-password
+
+langchain4j:
+  community:
+    dashscope:
+      chat-model:
+        # DashScope API Key。
+        api-key: replace-with-your-dashscope-api-key
+      streaming-chat-model:
+        # 流式模型与普通模型通常共用同一个 Key。
+        api-key: replace-with-your-dashscope-api-key
+      embedding-model:
+        # 向量模型调用同样需要 API Key。
+        api-key: replace-with-your-dashscope-api-key
+
+bigmodel:
+  # 智谱平台 API Key。
+  api-key: replace-with-your-bigmodel-api-key
+
+pgvector:
+  # 本地 pgvector 数据库名称。
+  database: infinitechat
+  # 本地 pgvector 主机地址。
+  host: localhost
+  # 本地 pgvector 端口。
+  port: 5432
+  # 本地 pgvector 用户名。
+  user: postgres
+  # 本地 pgvector 密码。
+  password: replace-with-your-local-pgvector-password
+  # 向量表名。
+  table: agent_embedding

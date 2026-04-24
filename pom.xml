@@ -1,54 +1,163 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Maven 项目描述文件。
+  可以把它理解成“这个 Java 项目依赖了什么、怎么构建”的总开关。
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.14</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>com.miles</groupId>
-	<artifactId>Miles-Agent</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>Miles-Agent</name>
-	<description>Miles-Agent</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
-	<properties>
-		<java.version>17</java.version>
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- POM 模型版本，Maven 自己要用。 -->
+    <modelVersion>4.0.0</modelVersion>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+    <!-- 继承 Spring Boot 官方父工程，省去大量依赖和插件版本管理。 -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.9</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+    <!-- 当前项目的基本坐标信息。 -->
+    <groupId>com.miles</groupId>
+    <artifactId>InfinteChat-Agent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>InfinteChat-Agent</name>
+    <description>InfinteChat-Agent</description>
+    <url/>
+    <licenses>
+        <license/>
+    </licenses>
+    <developers>
+        <developer/>
+    </developers>
+    <scm>
+        <connection/>
+        <developerConnection/>
+        <tag/>
+        <url/>
+    </scm>
+
+    <!-- 全局属性，统一管理 Java 版本。 -->
+    <properties>
+        <java.version>17</java.version>
+    </properties>
+
+    <!-- 项目运行所需依赖。 -->
+    <dependencies>
+        <!-- Spring MVC / Web 基础能力。 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- 单元测试和 Spring Boot 测试支持。 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Lombok：自动生成 getter/setter、builder、log 字段等样板代码。 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- DashScope 的 Spring Boot Starter，提供通义模型相关自动装配。 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-community-dashscope-spring-boot-starter</artifactId>
+            <version>1.1.0-beta7</version>
+        </dependency>
+
+        <!-- LangChain4j 核心能力。 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+        <!-- 这段被注释掉了，说明作者曾考虑过 easy-rag，但目前并未启用。 -->
+<!--        <dependency>-->
+<!--            <groupId>dev.langchain4j</groupId>-->
+<!--            <artifactId>langchain4j-easy-rag</artifactId>-->
+<!--            <version>1.1.0-beta7</version>-->
+<!--        </dependency>-->
+
+
+        <!-- pgvector：把文本向量存到 PostgreSQL/pgvector。 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-pgvector</artifactId>
+            <version>1.1.0-beta7</version>
+        </dependency>
+
+        <!-- MCP：让模型能调用外部工具服务。 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-mcp</artifactId>
+            <version>1.1.0-beta7</version>
+        </dependency>
+
+
+        <!-- Redis：用于聊天记忆存储。 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-community-redis-spring-boot-starter</artifactId>
+            <version>1.1.0-beta7</version>
+        </dependency>
+
+
+        <!-- 邮件发送能力。 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <!-- Reactor：支持 Flux 等响应式流，用于流式聊天。 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-reactor</artifactId>
+            <version>1.1.0-beta7</version>
+        </dependency>
+
+        <!-- Spring Actuator：暴露健康检查、Prometheus 指标等。 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+
+        <!-- 把 Micrometer 指标导出成 Prometheus 可抓取格式。 -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+    </dependencies>
+
+    <!-- 构建插件。 -->
+    <build>
+        <plugins>
+            <!-- 显式开启 Lombok 注解处理，避免 Maven 编译阶段不生成 getter/builder/log。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <!-- Spring Boot 官方打包插件，可生成可执行 jar / 镜像。 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

@@ -1,0 +1,75 @@
+# 应用的公共配置。
+# 这里放“无论 dev 还是 prod 都基本会用到”的核心设置。
+spring:
+  application:
+    # Spring 应用名，会出现在日志和监控里。
+    name: InfiniteChat-Agent
+  autoconfigure:
+    # 当前项目只使用 Redis 做聊天记忆，不使用 LangChain4j 提供的 Redis 向量库自动配置。
+    exclude:
+      - dev.langchain4j.community.store.embedding.redis.spring.RedisEmbeddingStoreAutoConfiguration
+  profiles:
+    # 默认同时加载 dev 和 local。
+    # 其中 application-local.yml 建议只保存在本地，并加入 .gitignore。
+    active: ${SPRING_PROFILES_ACTIVE:dev,local}
+  mail:
+    # 邮件配置建议通过环境变量或本地覆盖文件提供，不要把真实账号密码提交到 GitHub。
+    host: ${MAIL_HOST:smtp.qq.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:replace-with-your-mail-username}
+    password: ${MAIL_PASSWORD:replace-with-your-mail-password}
+    properties:
+      mail:
+        smtp:
+          # 是否启用 SMTP 认证。
+          auth: true
+          starttls:
+            # 是否启用 STARTTLS 加密。
+            enable: true
+
+server:
+  # HTTP 服务端口。
+  port: 10010
+  servlet:
+    # 所有接口统一加上 /api 前缀。
+    context-path: /api
+
+logging:
+  level:
+    # MCP 日志默认调低，避免控制台过于吵。
+    dev.langchain4j.mcp: ERROR
+
+# LangChain4j 模型配置。
+langchain4j:
+  community:
+    dashscope:
+      chat-model:
+        # 普通同步聊天所用模型。
+        model-name: qwen-max
+        api-key: ${DASHSCOPE_API_KEY:replace-with-your-dashscope-api-key}
+      streaming-chat-model:
+        # 流式聊天所用模型。
+        model-name: qwen-max
+        api-key: ${DASHSCOPE_API_KEY:replace-with-your-dashscope-api-key}
+      embedding-model:
+        # 文本向量化模型，供 RAG 建库与检索时使用。
+        model-name: text-embedding-v4
+        api-key: ${DASHSCOPE_API_KEY:replace-with-your-dashscope-api-key}
+
+
+bigmodel:
+  # 智谱开放平台 API Key，用于远程 MCP 搜索工具。
+  # 同样建议通过环境变量或本地覆盖文件提供。
+  api-key: ${BIGMODEL_API_KEY:replace-with-your-bigmodel-api-key}
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # 暴露给外部的 Actuator 端点。
+        include: health,info,prometheus
+  endpoint:
+    health:
+      # 健康检查显示详细信息，方便排错。
+      show-details: always

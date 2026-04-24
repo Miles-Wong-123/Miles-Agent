@@ -1,8 +1,18 @@
+# Spring Initializr 生成的帮助文档，通常不需要纳入版本控制。
 HELP.md
+
+# Maven / Java 构建产物，不需要提交到 GitHub。
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+# 本地私有配置与环境变量文件。
+.env
+.env.*
+!.env.example
+src/main/resources/application-local.yml
+src/main/resources/application-secrets.yml
 
 ### STS ###
 .apt_generated
@@ -14,6 +24,7 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
+# IDEA 工程文件属于本地开发环境配置。
 .idea
 *.iws
 *.iml
@@ -31,3 +42,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# macOS Finder 生成的系统文件。
+.DS_Store

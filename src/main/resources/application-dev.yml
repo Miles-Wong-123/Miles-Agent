@@ -1,0 +1,25 @@
+# 开发环境配置。
+# 一般指本机联调时使用的 Redis、pgvector 和知识库目录。
+spring:
+  data:
+    redis:
+      # 本地 Redis 连接参数。
+      # 默认值适合演示，真实密码建议放到 application-local.yml 或环境变量里。
+      host: ${DEV_REDIS_HOST:localhost}
+      password: ${DEV_REDIS_PASSWORD:replace-with-your-dev-redis-password}
+      port: ${DEV_REDIS_PORT:6380}
+      ttl: 3600
+      timeout: 30000
+
+pgvector:
+  # 本地 pgvector 数据库连接。
+  database: ${DEV_PGVECTOR_DATABASE:infinitechat}
+  host: ${DEV_PGVECTOR_HOST:localhost}
+  port: ${DEV_PGVECTOR_PORT:5432}
+  user: ${DEV_PGVECTOR_USER:postgres}
+  password: ${DEV_PGVECTOR_PASSWORD:replace-with-your-dev-pgvector-password}
+  table: ${DEV_PGVECTOR_TABLE:agent_embedding}
+
+rag:
+  # 本地知识文档目录，真实路径需要你自己填。
+  docs-path: ${RAG_DOCS_PATH:src/main/resources/docs}

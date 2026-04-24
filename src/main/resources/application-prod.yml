@@ -1,0 +1,26 @@
+# 生产环境配置。
+# 一般部署到服务器或容器后使用这份配置。
+spring:
+  data:
+    redis:
+      # 线上 Redis 连接参数。
+      # 生产环境的真实地址和密码请通过环境变量注入，不要写死在仓库里。
+      host: ${PROD_REDIS_HOST:replace-with-your-prod-redis-host}
+      port: ${PROD_REDIS_PORT:6379}
+      password: ${PROD_REDIS_PASSWORD:replace-with-your-prod-redis-password}
+      ttl: 3600
+      timeout: 30000
+
+pgvector:
+  # 线上 pgvector 数据库连接。
+  database: ${PROD_PGVECTOR_DATABASE:replace-with-your-prod-database}
+  host: ${PROD_PGVECTOR_HOST:replace-with-your-prod-pgvector-host}
+  port: ${PROD_PGVECTOR_PORT:5432}
+  user: ${PROD_PGVECTOR_USER:replace-with-your-prod-pgvector-user}
+  password: ${PROD_PGVECTOR_PASSWORD:replace-with-your-prod-pgvector-password}
+  table: ${PROD_PGVECTOR_TABLE:agent_embedding}
+
+
+rag:
+  # 容器 / 服务器上的知识文档挂载目录。
+  docs-path: ${PROD_RAG_DOCS_PATH:/data/docs}
