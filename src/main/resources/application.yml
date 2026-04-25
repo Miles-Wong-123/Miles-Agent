@@ -3,7 +3,7 @@
 spring:
   application:
     # Spring 应用名，会出现在日志和监控里。
-    name: InfiniteChat-Agent
+    name: Miles-Agent
   autoconfigure:
     # 当前项目只使用 Redis 做聊天记忆，不使用 LangChain4j 提供的 Redis 向量库自动配置。
     exclude:
