@@ -18,10 +18,10 @@
 
     <!-- 当前项目的基本坐标信息。 -->
     <groupId>com.miles</groupId>
-    <artifactId>InfinteChat-Agent</artifactId>
+    <artifactId>miles-agent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>InfinteChat-Agent</name>
-    <description>InfinteChat-Agent</description>
+    <name>Miles-Agent</name>
+    <description>Miles-Agent</description>
     <url/>
     <licenses>
         <license/>
