@@ -45,11 +45,11 @@ langchain4j:
     dashscope:
       chat-model:
         # 普通同步聊天所用模型。
-        model-name: qwen-max
+        model-name: qwen-plus
         api-key: ${DASHSCOPE_API_KEY:replace-with-your-dashscope-api-key}
       streaming-chat-model:
         # 流式聊天所用模型。
-        model-name: qwen-max
+        model-name: qwen-plus
         api-key: ${DASHSCOPE_API_KEY:replace-with-your-dashscope-api-key}
       embedding-model:
         # 文本向量化模型，供 RAG 建库与检索时使用。

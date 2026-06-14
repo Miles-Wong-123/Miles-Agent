@@ -72,7 +72,7 @@ public class AiChatService {
                 // 流式问答走这个模型。
                 .streamingChatModel(streamingChatModel)
                 // 对话前先进行知识检索，把命中的片段一起喂给模型。
-                .contentRetriever(contentRetriever)
+//                .contentRetriever(contentRetriever)
                 // 用 sessionId 作为 memoryId，把最近 20 条消息持久化在 Redis 中。
                 .chatMemoryProvider(memoryId -> MessageWindowChatMemory
                         .builder()
