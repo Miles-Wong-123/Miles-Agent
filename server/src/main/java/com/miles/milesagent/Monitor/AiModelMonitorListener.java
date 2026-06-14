@@ -48,8 +48,8 @@ public class AiModelMonitorListener implements ChatModelListener {
             log.error("MonitorContext is null when processing request");
             return;
         }
-        String userId = context.getUserId() != null ? context.getUserId().toString() : "unknown";
-        String sessionId = context.getSessionId() != null ? context.getSessionId().toString() : "unknown";
+        String userId = context.getUserId() != null ? context.getUserId() : "unknown";
+        String sessionId = context.getSessionId() != null ? context.getSessionId() : "unknown";
 
         // 存进 attributes，便于 onResponse / onError 阶段继续读取。
         requestContext.attributes().put(MONITOR_CONTEXT_KEY, context);
@@ -77,8 +77,8 @@ public class AiModelMonitorListener implements ChatModelListener {
             return;
         }
         
-        String userId = context.getUserId().toString();
-        String sessionId = context.getSessionId().toString();
+        String userId = context.getUserId();
+        String sessionId = context.getSessionId();
 
         // 2. 计算本次调用耗时。
         Duration durationMs = calculateDuration(attributes);
@@ -117,8 +117,8 @@ public class AiModelMonitorListener implements ChatModelListener {
             return;
         }
         
-        String userId = context.getUserId().toString();
-        String sessionId = context.getSessionId().toString();
+        String userId = context.getUserId();
+        String sessionId = context.getSessionId();
         String modelName = errorContext.chatRequest().modelName();
         String errorMessage = errorContext.error().getMessage();
         log.error("AI 请求失败 | 耗时: {}ms | 错误原因: {}", durationMs.toMillis(), errorContext.error().getMessage());

@@ -23,7 +23,7 @@ public interface AiChat {
      * @return 模型返回的完整文本
      */
     @SystemMessage(fromResource = "system-prompt/chat-bot.txt")
-    String chat(@MemoryId Long sessionId, @UserMessage String prompt);
+    String chat(@MemoryId String sessionId, @UserMessage String prompt);
 
 
     /**
@@ -34,5 +34,5 @@ public interface AiChat {
      * @return 按片段持续输出的文本流
      */
     @SystemMessage(fromResource = "system-prompt/chat-bot.txt")
-    Flux<String> streamChat(@MemoryId Long sessionId, @UserMessage String prompt);
+    Flux<String> streamChat(@MemoryId String sessionId, @UserMessage String prompt);
 }

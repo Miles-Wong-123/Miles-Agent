@@ -13,13 +13,13 @@ public class ChatRequest {
      * 会话 id。
      * 用来区分不同聊天上下文，同时也是 Redis 记忆的 key。
      */
-    private Long sessionId;
+    private String sessionId;
 
     /**
      * 用户 id。
      * 当前主要用于监控打点和日志定位。
      */
-    private Long userId;
+    private String userId;
 
     /**
      * 用户本次输入的问题或指令。

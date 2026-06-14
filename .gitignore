@@ -43,5 +43,16 @@ build/
 ### VS Code ###
 .vscode/
 
+### Claude Code ###
+# 本地的 Claude Code 偏好与权限配置，不入版本控制。
+.claude/settings.local.json
+
 # macOS Finder 生成的系统文件。
 .DS_Store
+
+### Vue 前端工程（web/）###
+web/node_modules/
+web/dist/
+web/.vite/
+web/*.log
+web/coverage/

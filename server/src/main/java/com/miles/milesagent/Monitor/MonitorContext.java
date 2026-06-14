@@ -20,12 +20,12 @@ public class MonitorContext implements Serializable {
     /**
      * 当前会话 id。
      */
-    private Long sessionId;
+    private String sessionId;
 
     /**
      * 当前用户 id。
      */
-    private Long userId;
+    private String userId;
 
     @Serial
     private static final long serialVersionUID = 1L;

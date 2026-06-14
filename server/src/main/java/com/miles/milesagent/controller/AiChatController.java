@@ -81,7 +81,7 @@ public class AiChatController {
 
 
 
-    @PostMapping("/streamChat")
+    @PostMapping(value = "/streamChat", produces = "text/plain;charset=UTF-8")
     public Flux<String> streamChat(@RequestBody ChatRequest chatRequest) {
         // 先构造一份监控上下文，后面在流真正订阅时再放进线程变量。
         MonitorContext context = MonitorContext.builder()

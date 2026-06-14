@@ -13,15 +13,16 @@
 
 ## 访问入口
 
-项目里已经带了一个静态聊天页，启动后可直接访问：
+仓库现在前后端并列，前端是仓库根的 `web/` 目录（Vue 3 + Vite + TypeScript）。生产构建产物会落到 `server/src/main/resources/static/`，由 Spring Boot 单进程一并提供。
 
-- `http://localhost:10010/api/`
+- `http://localhost:10010/api/`：聊天主界面（Vue 前端）
+- 任意非 `/api/<已知接口>` 的 GET 请求会回落到 `index.html`，让 Vue Router 的 history 模式可以直接深链刷新
 
-当前仓库还保留了几版前端原型：
+前端源码入口：
 
-- [`server/src/main/resources/static/index.html`](./server/src/main/resources/static/index.html)：当前默认聊天页
-- [`server/src/main/resources/front/gpt.html`](./server/src/main/resources/front/gpt.html)：较早版本原型
-- [`server/src/main/resources/front/qwen.html`](./server/src/main/resources/front/qwen.html)：另一版原型
+- [`web/`](./web)：完整的 Vue 工程（路由、状态、组件、单测均在这里）
+- [`web/src/views/ChatView.vue`](./web/src/views/ChatView.vue)：主聊天视图
+- [`web/src/lib/api.ts`](./web/src/lib/api.ts)：与后端 `/api/chat` / `/api/streamChat` 通讯
 
 ## 项目定位
 
@@ -118,7 +119,7 @@ Prometheus 指标端点：
 server/src/main/java/com/miles/milesagent
 ├── ai/                  # Agent 接口定义与装配
 ├── config/              # 模型、RAG、Redis、MCP 等配置
-├── controller/          # 对外 HTTP 接口
+├── controller/          # 对外 HTTP 接口（含 SPA fallback）
 ├── guardrail/           # 输入防护
 ├── Monitor/             # 模型调用监控
 ├── model/dto/           # 请求 DTO
@@ -126,9 +127,20 @@ server/src/main/java/com/miles/milesagent
 
 server/src/main/resources
 ├── docs/                # 本地知识文档
-├── static/              # 默认静态聊天页
-├── front/               # 早期前端原型
+├── static/              # 前端构建产物（pnpm build 自动覆盖）
 └── system-prompt/       # 系统提示词
+
+web/                     # Vue 3 + Vite + TypeScript 前端工程
+├── src/
+│   ├── components/      # 业务组件 + shadcn-vue UI 套件
+│   ├── composables/     # 主题、自动滚动等 hook
+│   ├── lib/             # api 客户端、markdown 渲染
+│   ├── router/          # Vue Router 4，history 模式
+│   ├── stores/          # Pinia: chat / settings（持久化）
+│   ├── styles/          # Tailwind 入口 + Claude 风主题变量
+│   └── views/           # 路由对应的视图
+├── test/                # Vitest 单元 + 组件测试
+└── vite.config.ts       # base = '/api/'，build outDir 指向 server/static
 ```
 
 ## 接口说明
@@ -141,11 +153,13 @@ server/src/main/resources
 
 ```json
 {
-  "sessionId": 1001,
-  "userId": 2001,
+  "sessionId": "7cb1d2f8-0000-4000-8000-aaaabbbbcccc",
+  "userId": "guest",
   "prompt": "你好，介绍一下你自己"
 }
 ```
+
+`sessionId` / `userId` 是字符串：前端使用 uuidv4，调试时也可以传任意可读字符串。
 
 ### 2. 流式聊天
 
@@ -216,12 +230,28 @@ export DEV_PGVECTOR_PORT=5432
 
 ### 3. 启动项目
 
+后端：
+
 ```bash
 cd server
 ./mvnw spring-boot:run
 ```
 
 或者直接在仓库根目录执行 `bash start-miles-agent.sh`，它会顺带启动 pgvector、Redis 容器后再拉起服务。
+
+前端开发：
+
+```bash
+cd web
+pnpm install        # 首次或依赖变更后
+pnpm dev            # 起 Vite 开发服务器，默认 5173，自动代理 /api/* 到 :10010
+pnpm test           # 运行 Vitest 单元 + 组件测试
+pnpm typecheck      # vue-tsc --noEmit
+pnpm lint           # ESLint flat config
+pnpm build          # 产物直接覆盖 server/src/main/resources/static/
+```
+
+部署仍然是单 jar：先 `cd web && pnpm build`，再 `cd server && ./mvnw -DskipTests package`，前端资源会自动嵌入到 `target/miles-agent-*.jar` 里。
 
 默认地址：
 
