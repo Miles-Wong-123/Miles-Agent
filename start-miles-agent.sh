@@ -75,4 +75,5 @@ if lsof -nP -iTCP:"$APP_PORT" -sTCP:LISTEN >/dev/null 2>&1; then
 fi
 
 echo "Starting Miles-Agent..."
+cd "$ROOT_DIR/server"
 exec ./mvnw spring-boot:run

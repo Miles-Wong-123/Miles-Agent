@@ -19,9 +19,9 @@
 
 当前仓库还保留了几版前端原型：
 
-- [`src/main/resources/static/index.html`](./src/main/resources/static/index.html)：当前默认聊天页
-- [`src/main/resources/front/gpt.html`](./src/main/resources/front/gpt.html)：较早版本原型
-- [`src/main/resources/front/qwen.html`](./src/main/resources/front/qwen.html)：另一版原型
+- [`server/src/main/resources/static/index.html`](./server/src/main/resources/static/index.html)：当前默认聊天页
+- [`server/src/main/resources/front/gpt.html`](./server/src/main/resources/front/gpt.html)：较早版本原型
+- [`server/src/main/resources/front/qwen.html`](./server/src/main/resources/front/qwen.html)：另一版原型
 
 ## 项目定位
 
@@ -42,7 +42,7 @@
 - `POST /api/chat`：同步对话
 - `POST /api/streamChat`：流式对话
 - 会话记忆按 `sessionId` 隔离，最近 20 条消息存入 Redis
-- 系统提示词位于 [`src/main/resources/system-prompt/chat-bot.txt`](./src/main/resources/system-prompt/chat-bot.txt)
+- 系统提示词位于 [`server/src/main/resources/system-prompt/chat-bot.txt`](./server/src/main/resources/system-prompt/chat-bot.txt)
 
 ### 2. 工具调用
 
@@ -55,9 +55,9 @@
 
 对应代码位置：
 
-- [`src/main/java/com/miles/milesagent/ai/AiChatService.java`](./src/main/java/com/miles/milesagent/ai/AiChatService.java)
-- [`src/main/java/com/miles/milesagent/tool`](./src/main/java/com/miles/milesagent/tool)
-- [`src/main/java/com/miles/milesagent/config/McpToolConfig.java`](./src/main/java/com/miles/milesagent/config/McpToolConfig.java)
+- [`server/src/main/java/com/miles/milesagent/ai/AiChatService.java`](./server/src/main/java/com/miles/milesagent/ai/AiChatService.java)
+- [`server/src/main/java/com/miles/milesagent/tool`](./server/src/main/java/com/miles/milesagent/tool)
+- [`server/src/main/java/com/miles/milesagent/config/McpToolConfig.java`](./server/src/main/java/com/miles/milesagent/config/McpToolConfig.java)
 
 ### 3. 知识库写入
 
@@ -68,7 +68,7 @@
 
 默认知识示例可见：
 
-- [`src/main/resources/docs/MilesAgent.md`](./src/main/resources/docs/MilesAgent.md)
+- [`server/src/main/resources/docs/MilesAgent.md`](./server/src/main/resources/docs/MilesAgent.md)
 
 ### 4. 监控能力
 
@@ -81,8 +81,8 @@
 
 相关代码：
 
-- [`src/main/java/com/miles/milesagent/Monitor/AiModelMonitorListener.java`](./src/main/java/com/miles/milesagent/Monitor/AiModelMonitorListener.java)
-- [`src/main/java/com/miles/milesagent/Monitor/AiModelMetricsCollector.java`](./src/main/java/com/miles/milesagent/Monitor/AiModelMetricsCollector.java)
+- [`server/src/main/java/com/miles/milesagent/Monitor/AiModelMonitorListener.java`](./server/src/main/java/com/miles/milesagent/Monitor/AiModelMonitorListener.java)
+- [`server/src/main/java/com/miles/milesagent/Monitor/AiModelMetricsCollector.java`](./server/src/main/java/com/miles/milesagent/Monitor/AiModelMetricsCollector.java)
 
 Prometheus 指标端点：
 
@@ -115,7 +115,7 @@ Prometheus 指标端点：
 ## 核心结构
 
 ```text
-src/main/java/com/miles/milesagent
+server/src/main/java/com/miles/milesagent
 ├── ai/                  # Agent 接口定义与装配
 ├── config/              # 模型、RAG、Redis、MCP 等配置
 ├── controller/          # 对外 HTTP 接口
@@ -124,7 +124,7 @@ src/main/java/com/miles/milesagent
 ├── model/dto/           # 请求 DTO
 └── tool/                # Agent 可调用工具
 
-src/main/resources
+server/src/main/resources
 ├── docs/                # 本地知识文档
 ├── static/              # 默认静态聊天页
 ├── front/               # 早期前端原型
@@ -185,7 +185,7 @@ src/main/resources
 复制示例配置：
 
 ```bash
-cp src/main/resources/application-local.example.yml src/main/resources/application-local.yml
+cp server/src/main/resources/application-local.example.yml server/src/main/resources/application-local.yml
 ```
 
 然后补充你自己的：
@@ -198,10 +198,10 @@ cp src/main/resources/application-local.example.yml src/main/resources/applicati
 
 相关配置文件：
 
-- [`src/main/resources/application.yml`](./src/main/resources/application.yml)
-- [`src/main/resources/application-dev.yml`](./src/main/resources/application-dev.yml)
-- [`src/main/resources/application-prod.yml`](./src/main/resources/application-prod.yml)
-- [`src/main/resources/application-local.example.yml`](./src/main/resources/application-local.example.yml)
+- [`server/src/main/resources/application.yml`](./server/src/main/resources/application.yml)
+- [`server/src/main/resources/application-dev.yml`](./server/src/main/resources/application-dev.yml)
+- [`server/src/main/resources/application-prod.yml`](./server/src/main/resources/application-prod.yml)
+- [`server/src/main/resources/application-local.example.yml`](./server/src/main/resources/application-local.example.yml)
 
 也可以直接通过环境变量覆盖，例如：
 
@@ -217,8 +217,11 @@ export DEV_PGVECTOR_PORT=5432
 ### 3. 启动项目
 
 ```bash
-mvn spring-boot:run
+cd server
+./mvnw spring-boot:run
 ```
+
+或者直接在仓库根目录执行 `bash start-miles-agent.sh`，它会顺带启动 pgvector、Redis 容器后再拉起服务。
 
 默认地址：
 
@@ -230,7 +233,7 @@ mvn spring-boot:run
 
 ### Agent 组装
 
-[`AiChatService`](./src/main/java/com/miles/milesagent/ai/AiChatService.java) 是整个项目的核心装配点，负责把这些能力组装到一个 `AiChat` Agent 上：
+[`AiChatService`](./server/src/main/java/com/miles/milesagent/ai/AiChatService.java) 是整个项目的核心装配点，负责把这些能力组装到一个 `AiChat` Agent 上：
 
 - `ChatModel`
 - `StreamingChatModel`
@@ -240,11 +243,11 @@ mvn spring-boot:run
 
 ### 输入防护
 
-[`SafeInputGuardrail`](./src/main/java/com/miles/milesagent/guardrail/SafeInputGuardrail.java) 对用户输入做了一个很轻量的敏感词拦截，属于演示级 guardrail。
+[`SafeInputGuardrail`](./server/src/main/java/com/miles/milesagent/guardrail/SafeInputGuardrail.java) 对用户输入做了一个很轻量的敏感词拦截，属于演示级 guardrail。
 
 ### 向量存储
 
-[`EmbeddingStoreConfig`](./src/main/java/com/miles/milesagent/config/EmbeddingStoreConfig.java) 当前使用 pgvector，并设置了：
+[`EmbeddingStoreConfig`](./server/src/main/java/com/miles/milesagent/config/EmbeddingStoreConfig.java) 当前使用 pgvector，并设置了：
 
 - `createTable(true)`
 - `dropTableFirst(true)`
