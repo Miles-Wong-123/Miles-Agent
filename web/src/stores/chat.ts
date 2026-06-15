@@ -90,7 +90,6 @@ export const useChatStore = defineStore('chat', {
     async runAssistant(target: ChatMessage, prompt: string) {
       const settings = useSettingsStore()
       const payload = {
-        userId: settings.userId,
         sessionId: settings.sessionId,
         prompt,
       }

@@ -10,6 +10,7 @@ import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.Metadata;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,9 +61,10 @@ public class AiChatController {
 //    }
 
     @PostMapping("/chat")
-    public String chat(@RequestBody ChatRequest chatRequest) {
+    public String chat(@RequestBody ChatRequest chatRequest, HttpSession session) {
+        String userId = session.getAttribute("userId") instanceof String value ? value : "unknown";
         // 在模型调用前，把用户和会话信息放进线程上下文，便于监控模块打点。
-        MonitorContextHolder.setContext(MonitorContext.builder().userId(chatRequest.getUserId()).sessionId(chatRequest.getSessionId()).build());
+        MonitorContextHolder.setContext(MonitorContext.builder().userId(userId).sessionId(chatRequest.getSessionId()).build());
 
         // 交给 LangChain4j 代理执行一次普通对话。
         String chat = aiChat.chat(chatRequest.getSessionId(), chatRequest.getPrompt());
@@ -82,10 +84,11 @@ public class AiChatController {
 
 
     @PostMapping(value = "/streamChat", produces = "text/plain;charset=UTF-8")
-    public Flux<String> streamChat(@RequestBody ChatRequest chatRequest) {
+    public Flux<String> streamChat(@RequestBody ChatRequest chatRequest, HttpSession session) {
+        String userId = session.getAttribute("userId") instanceof String value ? value : "unknown";
         // 先构造一份监控上下文，后面在流真正订阅时再放进线程变量。
         MonitorContext context = MonitorContext.builder()
-                .userId(chatRequest.getUserId())
+                .userId(userId)
                 .sessionId(chatRequest.getSessionId())
                 .build();
 
@@ -104,9 +107,12 @@ public class AiChatController {
     public String insertKnowledge(@RequestBody KnowledgeRequest knowledgeRequest) {
         // 1. 把问题和答案整理成统一的 markdown 片段，便于后续写文件和检索。
         String formattedContent = String.format("### Q：%s\n\nA：%s", knowledgeRequest.getQuestion(), knowledgeRequest.getAnswer());
+        String sourceName = (knowledgeRequest.getSourceName() != null && !knowledgeRequest.getSourceName().isBlank())
+                ? knowledgeRequest.getSourceName()
+                : TARGET_FILENAME;
 
         // 2. 先写入本地知识文件，确保文本有物理落盘。
-        boolean writeSuccess = appendToFile(formattedContent, knowledgeRequest.getSourceName());
+        boolean writeSuccess = appendToFile(formattedContent, sourceName);
         if (!writeSuccess) {
             return "插入失败：无法写入本地文件";
         }
@@ -114,7 +120,6 @@ public class AiChatController {
         // 3. 再把同样内容写入向量库，供后续 RAG 检索使用。
         try {
             // 记录“这段知识来自哪个文件”，后续检索结果里就能带上来源。
-            String sourceName = (knowledgeRequest.getSourceName() != null) ? knowledgeRequest.getSourceName() : TARGET_FILENAME;
             Metadata metadata = Metadata.from("file_name", sourceName);
 
             // 包装成 Document 后交给 Ingestor，它会负责切分、向量化和入库。
@@ -122,7 +127,7 @@ public class AiChatController {
             embeddingStoreIngestor.ingest(document);
 
             log.info("RAG - 新增知识点成功: {}", knowledgeRequest.getQuestion());
-            return "插入成功：已同步至 " + knowledgeRequest.getSourceName() + " 及向量数据库";
+            return "插入成功：已同步至 " + sourceName + " 及向量数据库";
         } catch (Exception e) {
             log.error("RAG - 向量化失败", e);
             return "插入部分成功：文件已写入，但向量库更新失败";
@@ -160,6 +165,4 @@ public class AiChatController {
         }
     }
 }
-
-
 

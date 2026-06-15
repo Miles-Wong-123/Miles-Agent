@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
 import AppHeader from '@/components/AppHeader.vue'
 import ChatList from '@/components/ChatList.vue'
@@ -9,6 +11,9 @@ import SettingsSheet from '@/components/SettingsSheet.vue'
 
 const chat = useChatStore()
 const { isStreaming, messages } = storeToRefs(chat)
+const auth = useAuthStore()
+const { user } = storeToRefs(auth)
+const router = useRouter()
 
 const settingsOpen = ref(false)
 const list = ref<InstanceType<typeof ChatList> | null>(null)
@@ -41,11 +46,16 @@ function retry() {
   ai.stoppedByUser = false
   void chat.runAssistant(ai, prevUser.content)
 }
+
+async function logout() {
+  await auth.logout()
+  await router.push({ name: 'login' })
+}
 </script>
 
 <template>
   <div class="flex h-full min-h-screen flex-col bg-background text-foreground">
-    <AppHeader @open-settings="settingsOpen = true" />
+    <AppHeader :user="user" @open-settings="settingsOpen = true" @logout="logout" />
     <ChatList ref="list" @send="send" @regenerate="regenerate" @retry="retry" />
     <ChatInput :is-streaming="isStreaming" @send="send" @stop="chat.stop()" />
     <SettingsSheet v-model:open="settingsOpen" />

@@ -2,8 +2,13 @@ export type ChatRole = 'user' | 'ai'
 
 export interface ChatPayload {
   sessionId: string
-  userId: string
   prompt: string
+}
+
+export interface AuthUser {
+  userId: string
+  email: string
+  nickname: string
 }
 
 export interface ChatErrorState {

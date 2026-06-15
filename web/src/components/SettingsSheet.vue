@@ -16,7 +16,7 @@ const props = defineProps<{ open: boolean }>()
 const emit = defineEmits<{ (e: 'update:open', value: boolean): void }>()
 
 const settings = useSettingsStore()
-const { userId, sessionId, useStreaming, theme } = storeToRefs(settings)
+const { sessionId, useStreaming, theme } = storeToRefs(settings)
 const chat = useChatStore()
 
 const themeOptions: ThemeMode[] = ['light', 'dark', 'system']
@@ -31,21 +31,10 @@ function resetSession() {
     <SheetContent side="right" class="w-full sm:max-w-md">
       <SheetHeader>
         <SheetTitle>设置</SheetTitle>
-        <SheetDescription>调整 userId、会话与外观偏好。修改会持久化到本地。</SheetDescription>
+        <SheetDescription>调整会话与外观偏好。修改会持久化到本地。</SheetDescription>
       </SheetHeader>
 
       <div class="mt-6 flex flex-col gap-6">
-        <div class="flex flex-col gap-2">
-          <label class="text-sm font-medium text-foreground" for="settings-userid">用户 ID</label>
-          <input
-            id="settings-userid"
-            v-model="userId"
-            type="text"
-            class="h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            placeholder="你的 ID（用于监控打点）"
-          />
-        </div>
-
         <div class="flex flex-col gap-2">
           <span class="text-sm font-medium text-foreground">会话 ID</span>
           <div class="flex items-center gap-2">

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miles.milesagent.auth.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="com.miles.milesagent.auth.model.User">
+        <id property="id" column="id"/>
+        <result property="email" column="email"/>
+        <result property="nickname" column="nickname"/>
+        <result property="passwordHash" column="password_hash"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="findByEmail" resultMap="UserResultMap">
+        SELECT id::text AS id, email, nickname, password_hash, created_at, updated_at
+        FROM users
+        WHERE email = #{email}
+        LIMIT 1
+    </select>
+
+    <insert id="insertUser" parameterType="com.miles.milesagent.auth.model.User">
+        INSERT INTO users (id, email, nickname, password_hash)
+        VALUES (CAST(#{id} AS UUID), #{email}, #{nickname}, #{passwordHash})
+    </insert>
+</mapper>

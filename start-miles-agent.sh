@@ -3,6 +3,8 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WEB_DIR="$ROOT_DIR/web"
+SERVER_DIR="$ROOT_DIR/server"
 PG_CONTAINER="miles-agent-pgvector"
 REDIS_CONTAINER="miles-agent-redis"
 APP_PORT=10010
@@ -17,7 +19,7 @@ require_command() {
 
 container_exists() {
   local container_name="$1"
-  docker inspect "$container_name" >/dev/null 2>&1
+  docker ps -a --format '{{.Names}}' | grep -Fxq "$container_name"
 }
 
 container_running() {
@@ -61,8 +63,29 @@ ensure_container_running() {
   echo "$service_name is ready on port $port"
 }
 
+build_frontend() {
+  echo "Building web frontend..."
+
+  cd "$WEB_DIR"
+
+  if command -v pnpm >/dev/null 2>&1; then
+    pnpm build
+    return 0
+  fi
+
+  if [[ -x "./node_modules/.bin/vue-tsc" && -x "./node_modules/.bin/vite" ]]; then
+    ./node_modules/.bin/vue-tsc --noEmit
+    ./node_modules/.bin/vite build
+    return 0
+  fi
+
+  echo "Frontend dependencies are missing. Please run 'cd web && pnpm install' first."
+  exit 1
+}
+
 require_command docker
 require_command bash
+require_command lsof
 
 cd "$ROOT_DIR"
 
@@ -74,6 +97,8 @@ if lsof -nP -iTCP:"$APP_PORT" -sTCP:LISTEN >/dev/null 2>&1; then
   exit 0
 fi
 
+build_frontend
+
 echo "Starting Miles-Agent..."
-cd "$ROOT_DIR/server"
+cd "$SERVER_DIR"
 exec ./mvnw spring-boot:run

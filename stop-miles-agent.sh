@@ -16,7 +16,7 @@ require_command() {
 
 container_exists() {
   local container_name="$1"
-  docker inspect "$container_name" >/dev/null 2>&1
+  docker ps -a --format '{{.Names}}' | grep -Fxq "$container_name"
 }
 
 container_running() {
